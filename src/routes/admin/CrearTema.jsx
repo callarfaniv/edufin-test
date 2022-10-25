@@ -1,13 +1,15 @@
-import { Box, Button, Center, FormControl, FormHelperText, FormLabel, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Text, Textarea, useDisclosure } from "@chakra-ui/react";
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Center, FormControl, FormHelperText, FormLabel, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Text, Textarea, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { db, storage } from "../firebase/firebase-config";
+import { db, storage } from "../../firebase/firebase-config";
 import { collection, getDocs, addDoc } from "firebase/firestore"
 import { ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
+import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
-export default function Admin() {
+export default function CrearTema() {
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    const [temas, setTemas] = useState([])
+    const { isOpen: isValOpen, onOpen: onValOpen, onClose: onValClose } = useDisclosure()
+    const { isOpen: isStaOpen, onOpen: onStaOpen, onClose: onStaClose } = useDisclosure()
     const [nombre, setNombre] = useState("")
     const [dificultad, setDificultad] = useState("")
     const [contDesc, setContDesc] = useState("")
@@ -22,18 +24,6 @@ export default function Admin() {
     const [statusMsj, setStatusMsj] = useState("")
 
     const temasCollectionRef = collection(db, "temas")
-
-    useEffect(() => {
-
-        const getTemas = async () => {
-            const data = await getDocs(temasCollectionRef)
-            setTemas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-            console.log(temas)
-        }
-
-        getTemas()
-
-    }, [])
 
     useEffect(() => {
         const addTema = async () => {
@@ -62,12 +52,20 @@ export default function Admin() {
         }
     }, [contImagenesUrls, ejemploImagenesUrls, ejerImagenesUrls])
 
-    const agregarTema = async () => {
+    const validar = async () => {
+        if (contImagenes.length == 0) {
+            setStatusMsj("El contenido no tiene imagens. Deseas continuar ?")
+        }
+        if (ejemploImagenes.length == 0) {
+            setStatusMsj("El ejemplo no tiene imagens. Deseas continuar ?")
+        }
+        if (ejerImagenes.length == 0) {
+            setStatusMsj("El ejercicio no tiene imagens. Deseas continuar ?")
+        }
         await cargarImagenes(contImagenes, setContImagenesUrls)
         await cargarImagenes(ejemploImagenes, setEjemploImagenesUrls)
         await cargarImagenes(ejerImagenes, setEjerImagenesUrls)
     }
-
 
     const cargarImagenes = async (files, setImagenesUrl) => {
         onOpen()
@@ -87,7 +85,15 @@ export default function Admin() {
 
     return (
         <>
-            <Box padding="20px" bg>
+            <Box padding="20px">
+                <Breadcrumb spacing='8px' separator={<ChevronRightIcon color='gray.500' />}>
+                    <BreadcrumbItem>
+                        <Link to="/admin"><BreadcrumbLink>Panel</BreadcrumbLink></Link>
+                    </BreadcrumbItem>
+                    <BreadcrumbItem isCurrentPage>
+                        <BreadcrumbLink>Crear tema</BreadcrumbLink>
+                    </BreadcrumbItem>
+                </Breadcrumb>
                 <Center>
                     <Heading>Agregar tema</Heading>
                 </Center>
@@ -155,28 +161,41 @@ export default function Admin() {
                 </Box>
                 <br />
                 <Center>
-                    <Button onClick={agregarTema}>Guardar tema</Button>
-                    <Button onClick={() => console.log(contImagenesUrls)}>Console.log</Button>
+                    <Button onClick={validar}>Guardar tema</Button>
                 </Center>
             </Box>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isValOpen} onClose={onValClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Subiendo imagen</ModalHeader>
+                    <ModalHeader>Crear tema</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Text>{statusMsj}</Text>
                     </ModalBody>
-
                     <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onClose}>
+                        <Button colorScheme='blue' mr={3} onClick={onValClose}>
                             Cerrar
                         </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
 
+            <Modal isOpen={isStaOpen} onClose={onStaClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Subiendo imagenes</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Text>{statusMsj}</Text>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={onStaClose}>
+                            Cerrar
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     )
 }
