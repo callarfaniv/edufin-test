@@ -54,7 +54,7 @@ export default function Temas() {
                                     <Td>{tema.dificultad}</Td>
                                     <Td isNumeric>
                                         <ButtonGroup variant='solid' spacing='6'>
-                                            <Link to="/admin/editar" state={{ text: "hola" }}><Button colorScheme='blue'>Editar</Button></Link>
+                                            <Link to="/admin/editar" state={{ id: tema.id }}><Button colorScheme='blue'>Editar</Button></Link>
                                             <Link><Button colorScheme='green'>Ver</Button></Link>
                                             <Link><Button colorScheme='red'>Borrar</Button></Link>
                                         </ButtonGroup>
