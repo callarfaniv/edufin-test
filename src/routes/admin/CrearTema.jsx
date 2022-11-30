@@ -18,9 +18,7 @@ export default function CrearTema() {
     const [ejemploDesc, setEjemploDesc] = useState("")
     const [ejemploImagenes, setEjemploImagenes] = useState([])
     const [ejemploImagenesUrls, setEjemploImagenesUrls] = useState([])
-    const [ejerDesc, setEjerDesc] = useState("")
-    const [ejerImagenes, setEjerImagenes] = useState([])
-    const [ejerImagenesUrls, setEjerImagenesUrls] = useState([])
+    const [ejerLink, setEjerLink] = useState("")
     const [statusMsj, setStatusMsj] = useState("")
 
     const temasCollectionRef = collection(db, "temas")
@@ -39,18 +37,16 @@ export default function CrearTema() {
                     imagenes: ejemploImagenesUrls
                 },
                 ejercicio: {
-                    descripcion: ejerDesc,
-                    imagenes: ejerImagenesUrls
+                    link: ejerLink,
                 },
             })
         }
-        if (!contImagenesUrls.length == 0 && !ejemploImagenesUrls.length == 0 && !ejerImagenesUrls.length == 0) {
+        if (!contImagenesUrls.length == 0 && !ejemploImagenesUrls.length == 0) {
             console.log("Contenido: ", contImagenesUrls)
             console.log("Ejemplo: ", ejemploImagenesUrls)
-            console.log("Ejercicio: ", ejerImagenesUrls)
             addTema()
         }
-    }, [contImagenesUrls, ejemploImagenesUrls, ejerImagenesUrls])
+    }, [contImagenesUrls, ejemploImagenesUrls])
 
     const validar = async () => {
         if (contImagenes.length == 0) {
@@ -59,16 +55,12 @@ export default function CrearTema() {
         if (ejemploImagenes.length == 0) {
             setStatusMsj("El ejemplo no tiene imagens. Deseas continuar ?")
         }
-        if (ejerImagenes.length == 0) {
-            setStatusMsj("El ejercicio no tiene imagens. Deseas continuar ?")
-        }
         await cargarImagenes(contImagenes, setContImagenesUrls)
         await cargarImagenes(ejemploImagenes, setEjemploImagenesUrls)
-        await cargarImagenes(ejerImagenes, setEjerImagenesUrls)
     }
 
     const cargarImagenes = async (files, setImagenesUrl) => {
-        onOpen()
+        onStaOpen()
         const urles = []
         files.map(async (file, i) => {
             const storageRef = ref(storage, `/files/${nombre}/${file.name}`)
@@ -149,14 +141,9 @@ export default function CrearTema() {
                         <Heading size="lg">Ejercicio</Heading>
                     </Center>
                     <FormControl>
-                        <FormLabel>Descripción</FormLabel>
-                        <Textarea placeholder='Here is a sample placeholder' onChange={(event) => setEjerDesc(event.target.value)} />
-                        <FormHelperText>Descripción del ejercicio.</FormHelperText>
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Imagenes</FormLabel>
-                        <Input type='file' multiple onChange={(event) => setEjerImagenes([...event.target.files])} />
-                        <FormHelperText>Imagenes del ejercicio.</FormHelperText>
+                        <FormLabel>Link</FormLabel>
+                        <Input type='text' onChange={(event) => setEjerLink(event.target.value)} />
+                        <FormHelperText>Link del ejercicio.</FormHelperText>
                     </FormControl>
                 </Box>
                 <br />

@@ -49,7 +49,7 @@ export default function Temas() {
                         </Thead>
                         <Tbody>
                             {temas.map(tema => (
-                                <Tr>
+                                <Tr key={tema.nombre}>
                                     <Td>{tema.nombre}</Td>
                                     <Td>{tema.dificultad}</Td>
                                     <Td isNumeric>

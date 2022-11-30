@@ -36,6 +36,6 @@ export default function Tema() {
             <Center>
                 <Heading>Ejemplo</Heading>
             </Center>
-        </Box >
+            <iframe src="https://learningapps.org/watch?v=pt7gxoa1t22" style={{ border: 0, width: '100%', height: 500 }} allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>        </Box >
     )
 }
